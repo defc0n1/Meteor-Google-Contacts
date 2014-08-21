@@ -162,16 +162,21 @@ GoogleContacts.prototype._getPhotoData = function (params, cb) {
 GoogleContacts.prototype.getPhoto = function (path, cb) {
   var self = this;
 
-  this._getPhotoData({path: path}, receivedPhotoData);
   function receivedPhotoData(err, data) {
     cb(err, data);
   }
+
+  this._getPhotoData({path: path}, receivedPhotoData);
 };
 
-GoogleContacts.prototype.getContacts = function (cb, contacts) {
+GoogleContacts.prototype.getContacts = function (query, cb, contacts) {
   var self = this;
-
-  this._get({ type: 'contacts' }, receivedContacts);
+  
+  if (typeof query === 'function') {
+    cb = query;
+    query = undefned;
+  } 
+  
   function receivedContacts(err, data) {
     if (err) return cb(err);
 
@@ -189,6 +194,8 @@ GoogleContacts.prototype.getContacts = function (cb, contacts) {
       cb(null, self.contacts);
     }
   }
+    
+  this._get({ "query": query }, receivedContacts);
 };
 
 GoogleContacts.prototype._saveContactsFromFeed = function (feed) {
@@ -231,6 +238,8 @@ GoogleContacts.prototype._buildPath = function (params) {
   params['max-results'] = params['max-results'] || 2000;
 
   var query = {
+    q: params.query,
+    v: '3.0',
     alt: params.alt,
     'max-results': params['max-results']
   };
