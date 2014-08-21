@@ -3,7 +3,7 @@ Package.describe({
 });
 
 Package.on_use(function (api) {
-  api.add_files(['index.js'], 'server');
+  api.add_files(['google-contacts.js'], 'server');
   if(api.export)
     api.export('GoogleContacts');
 });
